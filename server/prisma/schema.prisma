@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enum for Task Status
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+}
+
+// Enum for Priority
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model User {
+  id              String         @id @default(uuid())
+  name            String         
+  email           String?        @unique
+  password        String
+  salt            String
+  categories      Category[]     
+  notifications   Notification[]
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  @@map("users_table")
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   @map("user_id")
+  title       String
+  description String
+  tasks       Task[]
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("categories_table")
+}
+
+model Task {
+  id              String      @id @default(uuid())
+  title           String
+  description     String
+  category        Category    @relation(fields: [categoryId], references: [id])
+  categoryId      String      @map("category_id")
+  deadline        String
+  subTasks        SubTask[]   
+  status          TaskStatus  @default(TODO)
+  priority        Priority?
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  @@map("tasks_table")
+}
+
+model SubTask {
+  id              String      @id @default(uuid())
+  title           String
+  description     String
+  task            Task        @relation(fields: [taskId], references: [id])
+  taskId          String      @map("task_id") 
+  status          TaskStatus  @default(TODO)
+  priority        Priority?
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  @@map("subtasks_table")
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   @map("user_id")
+  title       String
+  description String
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("notifications_table")
+}
+

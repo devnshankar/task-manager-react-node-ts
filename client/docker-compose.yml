@@ -1,0 +1,23 @@
+version: "3.4"
+
+services:
+  # node JS CONTAINER
+  bun-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5173:5173
+    environment:
+      PORT: 5173
+    networks:
+      - portfolio-network
+
+#! NETWORKS
+networks:
+  portfolio-network:
+    driver: bridge
+
+#! VOLUMES
+volumes:
+  postgres_data:

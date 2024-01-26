@@ -1,0 +1,15 @@
+#root {
+  max-width: auto;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+body {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  body {
+    font-size: 17px; 
+  }
+}
